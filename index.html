@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Map Gallery</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: #eee;
+    text-align: center;
+  }
+  h1 { margin: 20px 0; }
+  .gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  .map {
+    background: #2a2a2a;
+    border-radius: 10px;
+    padding: 10px;
+    max-width: 300px;
+  }
+  img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  button {
+    margin-top: 5px;
+    background: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #45a049;
+  }
+</style>
+</head>
+<body>
+<h1>My Map Gallery</h1>
+<div class="gallery" id="gallery"></div>
+
+<script>
+async function loadMaps() {
+  const username = "peridotcow"; // 👈 Change this to your GitHub username
+  const repo = "maps";              // 👈 Your repo name
+
+  // GitHub API fetch for repo contents
+  const res = await fetch(`https://api.github.com/repos/${username}/${repo}/contents`);
+  const files = await res.json();
+
+  const gallery = document.getElementById("gallery");
+  files.forEach(file => {
+    if (file.name.match(/\.(png|jpg|jpeg|webp)$/i)) {
+      const div = document.createElement("div");
+      div.className = "map";
+
+      const img = document.createElement("img");
+      img.src = `https://${username}.github.io/${repo}/${file.name}`;
+      img.alt = file.name;
+
+      const btn = document.createElement("button");
+      btn.textContent = "Copy Link";
+      btn.onclick = () => {
+        navigator.clipboard.writeText(img.src);
+        btn.textContent = "Copied!";
+        setTimeout(() => btn.textContent = "Copy Link", 1500);
+      };
+
+      div.appendChild(img);
+      div.appendChild(document.createElement("br"));
+      div.appendChild(btn);
+      gallery.appendChild(div);
+    }
+  });
+}
+
+loadMaps();
+</script>
+</body>
+</html>
